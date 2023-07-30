@@ -106,14 +106,13 @@ if __name__ == "__main__":
         event, values = window.read()
         # print(event)
         if event == 'Enter':
-            tokens = tkn.validate_list(values['-IN-'].lower(), cm.game_state)
+            # tokens = tkn.validate_list(values['-IN-'].lower(), cm.game_state)
 
-            cm.interpret_commands(values['-IN-'].lower())
+            story = cm.interpret_commands(values['-IN-'].lower())
 
-            for token in tokens:
-                window['-OUTPUT-'].update(cm.game_play(token))
+            window['-OUTPUT-'].update(story)
 
-            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['Image'])  # , size=(100, 100))
+            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
             pass
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
