@@ -1,28 +1,11 @@
-from enum import Enum
-
-"""_summary_
-
-Take string containing a proposed command produce a list of tokens
-"""
-# _vocab_tokens = {'north', 'south', 'east', 'west', 'monster', 'fight', 'pick', 'up', 'open', 'close', 'run', 'duck',
-#                  'hide', 'go', 'swing', 'number', 'operator', 'name'}
-# _operators = {'+', '-', 'x', '/', '(', ')'}
-
-# _white_space = set('\t', '\r', '\n', ' ')
-
 _explore_tokens = {
-    "search",
-    "engage",
     "inventory",
-    "elmbrook village",
-    "sylvanwood forest",
-    "crystal cave",
-    "cloudcrest peaks",
-    "whispering willows",
-    "forsaken wastes",
-    "azure lake",
-    "shadowcrypt",
-    "inner sanctum"
+    "north",
+    "east",
+    "south",
+    "west",
+    "down",
+    "up"
 }
 
 _combat_tokens = {

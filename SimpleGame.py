@@ -48,12 +48,18 @@ def make_a_window():
     ]
 
     wrapped_text = textwrap.fill(
-        "In a land of magic and mystery, a young adventurer named "
-        "Emily embarks on a journey to save Elmbrook village from "
-        "a powerful and vile mage who is holed up deep within the "
-        "Shadowcrypt. Her quest begins in the quaint village of Elmbrook.",
-        20
-    )
+        "In a land of magic and mystery, a young adventurer embarks on a journey to save Elmbrook village from a "
+        "powerful and vile mage who is holed up deep within the Shadowcrypt. You start your adventure in Elmbrook, "
+        "where you meet an old wise sage who provides you with a basic wooden staff. The sage advises you to explore "
+        "the nearby locations to gather items and strength before facing the challenges ahead.",
+        35
+    ) + ('\n\nYou are in Elmbrook village.\n'
+         'North: Cloudcrest Peaks\n'
+         'East: Sylvanwood Forest\n'
+         'South: Forsaken Wastes\n'
+         'West: Whispering Willows'
+         )
+
     story_text = [
         sg.Text(
             wrapped_text,
@@ -84,7 +90,7 @@ def make_a_window():
         column_right
     ]
 
-    return sg.Window('Adventure Game', [layout], size=(400, 275))
+    return sg.Window('Adventure Game', [layout], size=(500, 400))
 
 
 if __name__ == "__main__":
@@ -107,7 +113,7 @@ if __name__ == "__main__":
             for token in tokens:
                 window['-OUTPUT-'].update(cm.game_play(token))
 
-            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['Image']) # , size=(100, 100))
+            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['Image'])  # , size=(100, 100))
             pass
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
