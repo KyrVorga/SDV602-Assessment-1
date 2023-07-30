@@ -1,9 +1,8 @@
-import PySimpleGUI as sg
-
-import cmd_parser.token as token
+import cmd_parser.token as tkn
 
 # Brief comment about how the following lines work
-game_state = 'Forest'
+game_location = 'Forest'
+game_state = 'explore' # explore / combat / inventory
 game_places = {'Forest': {'Story': 'You are in the forest.\nTo the north is a cave.\nTo the south is a castle.\nTo '
                                    'the east are mountains',
                           'North': 'Cave', 'South': 'Castle', 'East': 'Mountains', 'Image': 'forest.png'},
@@ -16,15 +15,38 @@ game_places = {'Forest': {'Story': 'You are in the forest.\nTo the north is a ca
                }
 
 
+def interpret_commands(token_list):
+    tokens = tkn.validatelist(token_list, game_state)
+    match game_state:
+        case "explore":
+            explore_game_play(tokens)
+        case "combat":
+            combat_game_play(tokens)
+        case "inventory":
+            inventory_game_play(tokens)
+
+
 def show_current_place():
     """Gets the story at the game_state place
 
     Returns:
         string: the story at the current place
     """
-    global game_state
+    global game_location
 
-    return game_places[game_state]['Story']
+    return game_places[game_location]['Story']
+
+
+def explore_game_play():
+    return True
+
+
+def combat_game_play():
+    return True
+
+
+def inventory_game_play():
+    return True
 
 
 def game_play(direction):
@@ -37,16 +59,16 @@ def game_play(direction):
     Returns:
         string: the story at the current place
     """
-    global game_state
+    global game_location
 
     if direction.lower() in 'northsoutheastwest':  # is this a nasty check?
-        game_place = game_places[game_state]
+        game_place = game_places[game_location]
         proposed_state = game_place[direction.capitalize()]
         if proposed_state == '':
-            return 'You can not go that way.\n' + game_places[game_state]['Story']
+            return 'You can not go that way.\n' + game_places[game_location]['Story']
         else:
-            game_state = proposed_state
-            return game_places[game_state]['Story']
+            game_location = proposed_state
+            return game_places[game_location]['Story']
 
 
 

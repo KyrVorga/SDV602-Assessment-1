@@ -2,7 +2,7 @@
 A comment describing the game module
 """
 import PySimpleGUI as sg
-
+import textwrap
 import cmd_parser.token as tkn
 import cmd_parser.command_manager as cm
 
@@ -16,18 +16,75 @@ def make_a_window():
     """
 
     sg.theme('DarkTeal10')  # please make your windows
-    prompt_input = [sg.Text('Enter your command', font='Any 12'), sg.Input(
-        key='-IN-', size=(20, 1), font='Any 12')]
-    buttons = [sg.Button('Enter', bind_return_key=True), sg.Button('Exit')]
-    command_col = sg.Column([prompt_input, buttons], element_justification='r')
-
-    layout = [
-        [sg.Image('images/forest.png', size=(100, 100), key="-IMG-"),
-         sg.Text(cm.show_current_place(), size=(100, 4), font='Any 12', key='-OUTPUT-')],
-        [command_col]
+    prompt_input = [
+        # sg.Text(
+        #     'Enter your command',
+        #     font='Any 12'
+        # ),
+        sg.Input(
+            key='-IN-',
+            size=20,
+            font='Any 12'
+        )
+    ]
+    buttons = [
+        sg.Button(
+            'Enter',
+            bind_return_key=True,
+            expand_x=True
+        ),
+        sg.Button(
+            'Exit',
+            expand_x=True
+        )
     ]
 
-    return sg.Window('Adventure Game', layout, size=(320, 200))
+    image = [
+        sg.Image(
+            'images/forest.png',
+            size=(180, 180),
+            key="-IMG-"
+        )
+    ]
+
+    wrapped_text = textwrap.fill(
+        "In a land of magic and mystery, a young adventurer named "
+        "Emily embarks on a journey to save Elmbrook village from "
+        "a powerful and vile mage who is holed up deep within the "
+        "Shadowcrypt. Her quest begins in the quaint village of Elmbrook.",
+        20
+    )
+    story_text = [
+        sg.Text(
+            wrapped_text,
+            # size=(100, 4),
+            auto_size_text=True,
+            expand_x=True,
+            expand_y=True,
+            font='Any 12',
+            key='-OUTPUT-'
+        )
+    ]
+
+    column_left = sg.Column(
+        [
+            image,
+            prompt_input,
+            buttons
+        ],
+        element_justification='c'
+    )
+    column_right = sg.Column(
+        [story_text],
+        element_justification='l'
+    )
+
+    layout = [
+        column_left,
+        column_right
+    ]
+
+    return sg.Window('Adventure Game', [layout], size=(400, 275))
 
 
 if __name__ == "__main__":
@@ -43,12 +100,14 @@ if __name__ == "__main__":
         event, values = window.read()
         # print(event)
         if event == 'Enter':
-            tokens = tkn.validate_list(values['-IN-'].lower())
+            tokens = tkn.validate_list(values['-IN-'].lower(), cm.game_state)
+
+            cm.interpret_commands(values['-IN-'].lower())
 
             for token in tokens:
                 window['-OUTPUT-'].update(cm.game_play(token))
 
-            window['-IMG-'].update('images/' + cm.game_places[cm.game_state]['Image'], size=(100, 100))
+            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['Image']) # , size=(100, 100))
             pass
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
