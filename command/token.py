@@ -45,4 +45,6 @@ def validate_list(input_string, game_state):
                     result.append(string.lower())
         case _:
             return Exception("Provided commands did not match valid tokens for state:" + game_state)
+    if len(result) == 0:
+        return Exception("Provided commands did not match valid tokens for state:" + game_state)
     return result

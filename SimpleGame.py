@@ -3,8 +3,8 @@ A comment describing the game module
 """
 import PySimpleGUI as sg
 import textwrap
-import cmd_parser.token as tkn
-import cmd_parser.command_manager as cm
+import command.token as tkn
+import command.command_manager as cm
 
 
 def make_a_window():
@@ -106,14 +106,12 @@ if __name__ == "__main__":
         event, values = window.read()
         # print(event)
         if event == 'Enter':
-            # tokens = tkn.validate_list(values['-IN-'].lower(), cm.game_state)
-
             story = cm.interpret_commands(values['-IN-'].lower())
 
-            window['-OUTPUT-'].update(story)
-
-            window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
-            pass
+            if type(story) != Exception:
+                window['-OUTPUT-'].update(story)
+                window['-IN-'].update('')
+                window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
             break

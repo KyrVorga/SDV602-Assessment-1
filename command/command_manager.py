@@ -1,4 +1,6 @@
-import cmd_parser.token as tkn
+import command.token as tkn
+import inventory.inventory_manager as im
+import combat.combat_manager as com
 import textwrap
 
 # Brief comment about how the following lines work
@@ -107,7 +109,9 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are at the Azure Lake.'
+        'visited message': 'You are at the Azure Lake.',
+        'enemy': 'Guardian Serpent',
+        'item': 'Vial of Healing Water'
     },
     'shadowcrypt': {
         'story': 'The sage back in Elmbrook told you how to enter the Shadowcrypt, the labyrinthine crypt beneath the '
@@ -132,20 +136,25 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Inner Sanctum.'
+        'visited message': 'You are in the Inner Sanctum.',
+        'enemy': 'Great Mage Jaldabaoth'
     },
 }
 
 
 def interpret_commands(token_list):
     tokens = tkn.validate_list(token_list, game_state)
+    if type(tokens) == Exception:
+        return tokens
     match game_state:
         case "explore":
             result = explore_game_play(tokens)
         case "combat":
-            result = combat_game_play(tokens)
+            result = com.combat_game_play(tokens)
         case "inventory":
-            result = inventory_game_play(tokens)
+            result = im.inventory_game_play(tokens)
+        case _:
+            result = ''
     return result
 
 
@@ -162,6 +171,7 @@ def show_current_place():
 
 def explore_game_play(token_list):
     global game_location
+    global game_state
 
     if token_list[0] in game_places[game_location]['directions']:
         direction = token_list[0]
@@ -169,6 +179,7 @@ def explore_game_play(token_list):
         if proposed_location is not None:
             game_location = proposed_location
             if not game_places[game_location]['visited']:
+                game_places[game_location]['visited'] = True
                 wrapped_text = textwrap.fill(game_places[game_location]['story'],
                                              35
                                              ) + '\n\n' + (game_places[game_location]['story_directions'])
@@ -179,31 +190,15 @@ def explore_game_play(token_list):
                                              ) + '\n\n' + (game_places[game_location]['story_directions'])
                 return wrapped_text
 
+    elif token_list[0] == 'engage':
+        game_state = 'combat'
 
-def combat_game_play(token_list):
-    return True
+    elif token_list[0] == 'inventory':
+        game_state = 'inventory'
+
+
+
 
 
 def inventory_game_play(token_list):
     return True
-
-# def game_play(direction):
-#     """
-#     Runs the game_play
-#
-#     Args:
-#         direction string: _North or South
-#
-#     Returns:
-#         string: the story at the current place
-#     """
-#     global game_location
-#
-#     if direction.lower() in 'northsoutheastwest':  # is this a nasty check?
-#         game_place = game_places[game_location]
-#         proposed_state = game_place[direction.capitalize()]
-#         if proposed_state == '':
-#             return 'You can not go that way.\n' + game_places[game_location]['Story']
-#         else:
-#             game_location = proposed_state
-#             return game_places[game_location]['Story']
