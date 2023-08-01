@@ -27,7 +27,8 @@ game_places = {
         },
         'image': 'forest.png',
         'visited': False,
-        'visited message': 'You are in Elmbrook Village.'
+        'visited message': 'You are in Elmbrook Village.',
+        'item': 'Wooden Staff'
     },
     'sylvanwood forest': {
         'story':
@@ -173,7 +174,7 @@ def show_current_place():
         story_list.append(textwrap.fill(game_places[game_location]['visited message'], 35))
 
     if "enemy" in game_places[game_location]:
-        location_enemy = game_places[game_location]["enemy"]
+        location_enemy = game_places[game_location]["enemy"].lower()
         if not com.game_enemies[location_enemy]["defeated"]:
             story_list.append('\n\n')
             story_list.append(textwrap.fill(com.game_enemies[location_enemy]["description"], 35))
@@ -194,14 +195,20 @@ def explore_game_play(token_list):
         if proposed_location is not None:
             game_location = proposed_location
             return show_current_place()
+    elif token_list[0] == 'search':
+        game_state = 'inventory'
+        if 'item' in game_places[game_location]:
+            item_name = game_places[game_location]['item'].lower()
+            if not im.game_items[item_name]['acquired']:
+                im.game_items[item_name]['acquired'] = True
+                return im.show_inventory_text(im.game_items[item_name]['found_text'])
+            else:
+                return im.show_inventory_text("You found nothing...")
 
     elif token_list[0] == 'engage':
         game_state = 'combat'
-        return com.show_combat_text(game_places[game_location]['enemy'])
+        return com.show_combat_text(game_places[game_location]['enemy'].lower())
 
     elif token_list[0] == 'inventory':
         game_state = 'inventory'
-
-
-def inventory_game_play(token_list):
-    return True
+        return im.show_inventory_text()

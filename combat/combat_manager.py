@@ -4,7 +4,7 @@
 import command.command_manager as cm
 
 game_enemies = {
-    'Guardian Serpent': {
+    'guardian serpent': {
         'health': 10,
         'attack': 1000,
         'reward': 'Vial of Healing Water',
@@ -13,7 +13,7 @@ game_enemies = {
         'description': "The Guardian Serpent circles the Azure Lake, should you approach it will defend the lake.",
         'death_message': ''
     },
-    'Great Mage Jaldabaoth': {
+    'great mage jaldabaoth': {
         'health': 100,
         'attack': 10,
         'location': 'inner sanctum',
@@ -33,14 +33,14 @@ player = {
 
     'stats': {
         'health': 25,
-        'attack': 5,
+        'attack': 1,
     },
     'death_message': ''
 }
 
 
 def combat_game_play(token_list):
-    enemy_name = cm.game_places[cm.game_location]['enemy']
+    enemy_name = cm.game_places[cm.game_location]['enemy'].lower()
     enemy = game_enemies[enemy_name]
     match token_list[0]:
         case "run":
@@ -54,7 +54,7 @@ def combat_game_play(token_list):
             elif player['stats']['health'] <= 0:
                 return player['death_message']
 
-            return show_combat_text(enemy_name)
+            return show_combat_text(enemy_name.lower())
             # return updated stats
         # case "block":
         #

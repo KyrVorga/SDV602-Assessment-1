@@ -1,6 +1,7 @@
 _explore_tokens = {
     "inventory",
     "engage",
+    "search",
     "north",
     "east",
     "south",
@@ -19,7 +20,7 @@ _combat_tokens = {
 }
 
 _inventory_tokens = {
-    "close",
+    "back",
     # "discard",
     "equip",
     "unequip",

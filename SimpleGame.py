@@ -17,10 +17,6 @@ def make_a_window():
 
     sg.theme('DarkTeal10')  # please make your windows
     prompt_input = [
-        # sg.Text(
-        #     'Enter your command',
-        #     font='Any 12'
-        # ),
         sg.Input(
             key='-IN-',
             size=20,
@@ -37,6 +33,13 @@ def make_a_window():
             'Exit',
             expand_x=True
         )
+    ]
+    item_text = [
+        sg.Text(
+            '',
+            font='Any 12',
+            key="-ITEM-"
+        ),
     ]
 
     image = [
@@ -63,7 +66,8 @@ def make_a_window():
         [
             image,
             prompt_input,
-            buttons
+            buttons,
+            item_text
         ],
         element_justification='c'
     )
@@ -96,8 +100,8 @@ if __name__ == "__main__":
             story = cm.interpret_commands(values['-IN-'].lower())
 
             if type(story) != Exception:
-                window['-OUTPUT-'].update(story)
                 window['-IN-'].update('')
+                window['-OUTPUT-'].update(story)
                 window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
