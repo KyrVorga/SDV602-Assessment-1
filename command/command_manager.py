@@ -26,7 +26,7 @@ game_places = {
             'down': 'Shadowcrypt'
         },
         'image': 'forest.png',
-        'visited': True,
+        'visited': False,
         'visited message': 'You are in Elmbrook Village.'
     },
     'sylvanwood forest': {
@@ -50,7 +50,7 @@ game_places = {
                  'ancient armour forged from enchanted crystals. You can equip the armour, enhancing your defence '
                  'against adversaries.',
         'story_directions':
-                 'West: Sylvanwood Forest',
+            'West: Sylvanwood Forest',
         'directions': {
             'west': 'Sylvanwood Forest',
         },
@@ -64,7 +64,7 @@ game_places = {
                  'allowing you to cast spells with.'
                  'your staff.\n',
         'story_directions':
-                 'East: Elmbrook Village\n',
+            'East: Elmbrook Village\n',
         'directions': {
             'east': 'Elmbrook Village',
         },
@@ -76,7 +76,7 @@ game_places = {
         'story': 'To the north of Elmbrook lies the treacherous Cloudcrest Peaks. Climbing to the summit, '
                  'you discover a mysterious potion that grants you temporary invincibility during battles.\n',
         'story_directions':
-                 'South: Elmbrook Village\n',
+            'South: Elmbrook Village\n',
         'directions': {
             'south': 'Elmbrook Village',
         },
@@ -89,8 +89,8 @@ game_places = {
                  'scorching sands, you unearth an ancient scroll containing forgotten combat techniques that can '
                  'enhance your attack capabilities.\n',
         'story_directions':
-                 'North: Elmbrook Village\n'
-                 'South: Azure Lake\n',
+            'North: Elmbrook Village\n'
+            'South: Azure Lake\n',
         'directions': {
             'north': 'Elmbrook Village',
             'south': 'Azure Lake',
@@ -103,7 +103,7 @@ game_places = {
         'story': 'Further south, you arrives at the tranquil Azure Lake, guarded by a mythical water serpent. if you '
                  'can defeat the serpent, you may claim a vial of healing water, which fully restores your health.\n',
         'story_directions':
-                 'North: Forsaken Wastes.\n',
+            'North: Forsaken Wastes.\n',
         'directions': {
             'north': 'Forsaken Wastes',
         },
@@ -130,7 +130,7 @@ game_places = {
         'story': 'After stumbling through the Shadowcrypt you finally reach the Inner Sanctum and confront the '
                  'vile mage.\n',
         'story_directions':
-                 'Up: Shadowcrypt',
+            'Up: Shadowcrypt',
         'directions': {
             'up': 'Shadowcrypt',
         },
@@ -165,8 +165,23 @@ def show_current_place():
         string: the story at the current place
     """
     global game_location
+    story_list = []
+    if not game_places[game_location]['visited']:
+        game_places[game_location]['visited'] = True
+        story_list.append(textwrap.fill(game_places[game_location]['story'], 35))
+    else:
+        story_list.append(textwrap.fill(game_places[game_location]['visited message'], 35))
 
-    return game_places[game_location]['story']
+    if "enemy" in game_places[game_location]:
+        location_enemy = game_places[game_location]["enemy"]
+        if not com.game_enemies[location_enemy]["defeated"]:
+            story_list.append('\n\n')
+            story_list.append(textwrap.fill(com.game_enemies[location_enemy]["description"], 35))
+
+    story_list.append('\n\n')
+    story_list.append(game_places[game_location]['story_directions'])
+
+    return ''.join(story_list)
 
 
 def explore_game_play(token_list):
@@ -178,26 +193,14 @@ def explore_game_play(token_list):
         proposed_location = game_places[game_location]['directions'][direction].lower()
         if proposed_location is not None:
             game_location = proposed_location
-            if not game_places[game_location]['visited']:
-                game_places[game_location]['visited'] = True
-                wrapped_text = textwrap.fill(game_places[game_location]['story'],
-                                             35
-                                             ) + '\n\n' + (game_places[game_location]['story_directions'])
-                return wrapped_text
-            else:
-                wrapped_text = textwrap.fill(game_places[game_location]['visited message'],
-                                             35
-                                             ) + '\n\n' + (game_places[game_location]['story_directions'])
-                return wrapped_text
+            return show_current_place()
 
     elif token_list[0] == 'engage':
         game_state = 'combat'
+        return com.show_combat_text(game_places[game_location]['enemy'])
 
     elif token_list[0] == 'inventory':
         game_state = 'inventory'
-
-
-
 
 
 def inventory_game_play(token_list):

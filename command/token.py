@@ -1,5 +1,6 @@
 _explore_tokens = {
     "inventory",
+    "engage",
     "north",
     "east",
     "south",

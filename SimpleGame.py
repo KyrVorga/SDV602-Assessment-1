@@ -47,22 +47,9 @@ def make_a_window():
         )
     ]
 
-    wrapped_text = textwrap.fill(
-        "In a land of magic and mystery, a young adventurer embarks on a journey to save Elmbrook village from a "
-        "powerful and vile mage who is holed up deep within the Shadowcrypt. You start your adventure in Elmbrook, "
-        "where you meet an old wise sage who provides you with a basic wooden staff. The sage advises you to explore "
-        "the nearby locations to gather items and strength before facing the challenges ahead.",
-        35
-    ) + ('\n\nYou are in Elmbrook village.\n'
-         'North: Cloudcrest Peaks\n'
-         'East: Sylvanwood Forest\n'
-         'South: Forsaken Wastes\n'
-         'West: Whispering Willows'
-         )
-
     story_text = [
         sg.Text(
-            wrapped_text,
+            cm.show_current_place(),
             # size=(100, 4),
             auto_size_text=True,
             expand_x=True,
