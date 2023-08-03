@@ -47,7 +47,7 @@ def validate_list(input_string, game_state):
             if string_list[0] in _inventory_tokens:
                 result = string_list
         case _:
-            return Exception("Provided commands did not match valid tokens for state:" + game_state)
+            return tuple(('Error', 'Provided commands did not match valid tokens for state'))
     if len(result) == 0:
-        return Exception("Provided commands did not match valid tokens for state:" + game_state)
+        return tuple(('Error', 'Provided commands did not match valid tokens for state'))
     return result

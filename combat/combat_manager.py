@@ -2,9 +2,11 @@
 # store the combat enemies and their stats.
 
 import command.command_manager as cm
+import inventory.inventory_manager as im
 
 game_enemies = {
     'guardian serpent': {
+        'name': 'Guardian Serpent',
         'health': 10,
         'attack': 1000,
         'reward': 'Vial of Healing Water',
@@ -14,7 +16,8 @@ game_enemies = {
         'death_message': ''
     },
     'great mage jaldabaoth': {
-        'health': 100,
+        'name': 'Great Mage Jaldabaoth',
+        'health': 1,
         'attack': 10,
         'location': 'inner sanctum',
         'reward': 'Jaldabaoth\'s Staff',
@@ -32,6 +35,7 @@ player = {
     ],
 
     'stats': {
+        'max_health': 25,
         'health': 25,
         'attack': 1,
     },
@@ -49,30 +53,37 @@ def combat_game_play(token_list):
         case "attack":
             enemy['health'] = enemy['health'] - player['stats']['attack']
             player['stats']['health'] = player['stats']['health'] - enemy['attack']
-            if enemy['health'] <= 0:
-                return enemy['death_message']
-            elif player['stats']['health'] <= 0:
-                return player['death_message']
+            # if enemy['health'] <= 0:
+            #     return enemy['death_message']
+            # elif player['stats']['health'] <= 0:
+            #     return player['death_message']
 
-            return show_combat_text(enemy_name.lower())
+            # return show_combat_text(enemy_name.lower())
             # return updated stats
-        # case "block":
-        #
+        case "block":
+            if not im.game_items['shimmering crystal']['acquired']:
+                return tuple(('Message', 'You can\'t perform this action'))
+            else:
+                return tuple(('Message', 'You blocked the attack!'))
+
         # case "heal":
         #
         # case "potion":
         #
         # case "magic":
-        #
+
         # case _:
 
-    return True
-
+    if enemy['health'] <= 0 < player['stats']['health']:
+        for item in im.game_items:
+            if im.game_items[item]['source'] == enemy['name']:
+                im.game_items[item]['acquired'] = True
+    return show_combat_text(enemy_name.lower())
 
 def show_combat_text(enemy):
     combat_list = [
         'Name: ',
-        enemy,
+        game_enemies[enemy]['name'],
         '\n',
         'Health: ',
         str(game_enemies[enemy]['health']),

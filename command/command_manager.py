@@ -44,7 +44,8 @@ game_places = {
         },
         'image': 'forest_circle.png',
         'visited': False,
-        'visited message': 'You are in the Sylvanwood Forest.'
+        'visited message': 'You are in the Sylvanwood Forest.',
+        'item': 'Shimmering Crystal'
     },
     'crystal cave': {
         'story': 'Deep within the Sylvanwood Forest, you stumble upon the Crystal Cave. Here, you find a set of '
@@ -57,7 +58,8 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Crystal Cave.'
+        'visited message': 'You are in the Crystal Cave.',
+        'item': 'Enchanted Armour'
     },
     'whispering willows': {
         'story': 'West of Elmbrook, you encounter the eerie Whispering Willows — a haunted grove filled with '
@@ -71,11 +73,11 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Whispering Willows.'
+        'visited message': 'You are in the Whispering Willows.',
+        'item': 'Magical Pendant'
     },
     'cloudcrest peaks': {
-        'story': 'To the north of Elmbrook lies the treacherous Cloudcrest Peaks. Climbing to the summit, '
-                 'you discover a mysterious potion that grants you temporary invincibility during battles.\n',
+        'story': 'To the north of Elmbrook lies the treacherous Cloudcrest Peaks. You being Climbing to the summit.\n',
         'story_directions':
             'South: Elmbrook Village\n',
         'directions': {
@@ -83,10 +85,11 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Cloudcrest Peaks.'
+        'visited message': 'You are in the Cloudcrest Peaks.',
+        'item': 'Invincibility Potion'
     },
     'forsaken wastes': {
-        'story': 'Venturing southwards, you reache the Forsaken Wastes, a vast, desolate wasteland. Amid the '
+        'story': 'Venturing southwards, you reach the Forsaken Wastes, a vast, desolate wasteland. Amid the '
                  'scorching sands, you unearth an ancient scroll containing forgotten combat techniques that can '
                  'enhance your attack capabilities.\n',
         'story_directions':
@@ -98,7 +101,8 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Forsaken Wastes.'
+        'visited message': 'You are in the Forsaken Wastes.',
+        'item': 'Ancient Scroll'
     },
     'azure lake': {
         'story': 'Further south, you arrive at the tranquil Azure Lake, guarded by a mythical water serpent. if you '
@@ -125,7 +129,8 @@ game_places = {
         },
         'image': 'frog.png',
         'visited': False,
-        'visited message': 'You are in the Shadowcrypt.'
+        'visited message': 'You are in the Shadowcrypt.',
+        'item': 'Inner Sanctum Key'
     },
     'inner sanctum': {
         'story': 'After stumbling through the Shadowcrypt you finally reach the Inner Sanctum and confront the '
@@ -145,7 +150,7 @@ game_places = {
 
 def interpret_commands(token_list):
     tokens = tkn.validate_list(token_list, game_state)
-    if type(tokens) == Exception:
+    if type(tokens) is tuple:
         return tokens
     match game_state:
         case "explore":
@@ -207,7 +212,7 @@ def explore_game_play(token_list):
 
     elif token_list[0] == 'engage':
         if 'enemy' not in game_places[game_location]:
-            return Exception('This region has no enemies.')
+            return tuple(('Message', 'This region has no enemies.'))
 
         game_state = 'combat'
         return com.show_combat_text(game_places[game_location]['enemy'].lower())

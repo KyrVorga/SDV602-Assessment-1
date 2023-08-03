@@ -38,7 +38,7 @@ def make_a_window():
         sg.Text(
             '',
             font='Any 12',
-            key="-ITEM-"
+            key="-MESSAGE-"
         ),
     ]
 
@@ -99,10 +99,15 @@ if __name__ == "__main__":
         if event == 'Enter':
             story = cm.interpret_commands(values['-IN-'].lower())
 
-            if type(story) != Exception:
+            if type(story) != tuple:
                 window['-IN-'].update('')
                 window['-OUTPUT-'].update(story)
                 window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
+                window['-MESSAGE-'].update('')
+            else:
+                if not story[0] == 'Error':
+                    wrapped = textwrap.fill(story[1], 30)
+                    window['-MESSAGE-'].update(wrapped)
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
             break

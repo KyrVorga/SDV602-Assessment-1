@@ -27,6 +27,7 @@ game_items = {
         'name': 'Shimmering Crystal',
         'source': 'Sylvanwood Forest',
         'description': 'Allows you to cast protective spells in battle.',
+        'found_text': 'You defeated the Guardian Serpent and claimed the Vial.',
         'equippable': False,
         'equipped': False,
         'acquired': False,
@@ -36,6 +37,7 @@ game_items = {
         'name': 'Enchanted Armour',
         'source': 'Crystal Cave',
         'description': 'enhances your defence against adversaries.',
+        'found_text': '',
         'equippable': True,
         'equipped': False,
         'acquired': False
@@ -44,6 +46,7 @@ game_items = {
         'name': 'Magical Pendant',
         'source': 'Whispering Willows',
         'description': 'increases your magical powers allowing you to cast spells with your staff.',
+        'found_text': '',
         'equippable': True,
         'equipped': False,
         'acquired': False
@@ -52,6 +55,7 @@ game_items = {
         'name': 'Invincibility Potion',
         'source': 'Cloudcrest Peaks',
         'description': 'Grants you temporary invincibility during a battle.',
+        'found_text': '',
         'equippable': False,
         'equipped': False,
         'acquired': False,
@@ -61,6 +65,7 @@ game_items = {
         'name': 'Ancient Scroll',
         'source': 'Forsaken Wastes',
         'description': 'Teaches you ancient combat techniques, increasing your attack power.',
+        'found_text': '',
         'equippable': False,
         'equipped': False,
         'acquired': False
@@ -69,6 +74,16 @@ game_items = {
         'name': 'Inner Sanctum Key',
         'source': 'Shadowcrypt',
         'description': 'Allows access into the Inner Sanctum',
+        'found_text': '',
+        'equippable': False,
+        'equipped': False,
+        'acquired': False
+    },
+    'jaldabaoth\'s staff': {
+        'name': 'Jaldabaoth\'s Staff',
+        'source': 'Great Mage Jaldabaoth',
+        'description': 'You defeated the Great Mage Jaldabaoth and claimed his staff!',
+        'found_text': 'You defeated the Great Mage Jaldabaoth and claimed his staff!',
         'equippable': False,
         'equipped': False,
         'acquired': False
@@ -80,9 +95,9 @@ def toggle_equip_status(action, item):
     health = 0
     attack = 0
     if not game_items[item]['acquired']:
-        return Exception("You don't have this item.")
+        return tuple(('Message', 'You don\'t have this item.'))
     elif not game_items[item]['equippable']:
-        return Exception("You can't equip this item.")
+        return tuple(('Message', 'You can\'t equip this item.'))
     else:
         match item:
             case 'wooden staff':
@@ -115,7 +130,7 @@ def inventory_game_play(token_list):
 
         case "equip":
             if len(token_list) <= 1:
-                return Exception("Incorrect amount of arguments.")
+                return tuple(('Error', 'Incorrect amount of arguments.'))
             else:
                 action = token_list.pop(0)
                 item_name = ' '.join(token_list)
@@ -124,7 +139,7 @@ def inventory_game_play(token_list):
 
         case "unequip":
             if len(token_list) <= 1:
-                return Exception("Incorrect amount of arguments.")
+                return tuple(('Error', 'Incorrect amount of arguments.'))
             else:
                 action = token_list.pop(0)
                 item_name = ' '.join(token_list)
