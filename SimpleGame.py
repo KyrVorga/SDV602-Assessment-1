@@ -106,8 +106,9 @@ if __name__ == "__main__":
                 window['-MESSAGE-'].update('')
             else:
                 if not story[0] == 'Error':
-                    wrapped = textwrap.fill(story[1], 30)
+                    wrapped = textwrap.fill(story[1], 20)
                     window['-MESSAGE-'].update(wrapped)
+                    window['-IN-'].update('')
 
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
             break

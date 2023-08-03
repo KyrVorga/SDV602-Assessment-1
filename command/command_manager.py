@@ -1,6 +1,7 @@
 import command.token as tkn
 import inventory.inventory_manager as im
 import combat.combat_manager as com
+import status.status_manager as sts
 import textwrap
 
 # Brief comment about how the following lines work
@@ -157,8 +158,6 @@ def interpret_commands(token_list):
             result = explore_game_play(tokens)
         case "combat":
             result = com.combat_game_play(tokens)
-        case "inventory":
-            result = im.inventory_game_play(tokens)
         case _:
             result = ''
     return result
@@ -198,17 +197,28 @@ def explore_game_play(token_list):
         direction = token_list[0]
         proposed_location = game_places[game_location]['directions'][direction].lower()
         if proposed_location is not None:
-            game_location = proposed_location
-            return show_current_place()
+            if proposed_location == 'inner sanctum' and not im.game_items['inner sanctum key']['acquired']:
+                return tuple(('Message', 'The way is locked...'))
+            elif proposed_location == 'elmbrook village' and im.game_items['jaldabaoth\'s staff']['acquired']:
+                return sts.show_status_text(
+                    'game over',
+                    'You have defeated the Great Mage Jaldabaoth who has been plaguing the lands, well done great hero!'
+                )
+            else:
+                game_location = proposed_location
+                return show_current_place()
+
     elif token_list[0] == 'search':
-        game_state = 'inventory'
         if 'item' in game_places[game_location]:
             item_name = game_places[game_location]['item'].lower()
             if not im.game_items[item_name]['acquired']:
                 im.game_items[item_name]['acquired'] = True
-                return im.show_inventory_text(im.game_items[item_name]['found_text'])
+                message = im.game_items[item_name]['found_text']
+                return tuple(('Message', message))
+                # return im.show_inventory_text(im.game_items[item_name]['found_text'])
             else:
-                return im.show_inventory_text("You found nothing...")
+                return tuple(('Message', "You found nothing..."))
+                # return im.show_inventory_text("You found nothing...")
 
     elif token_list[0] == 'engage':
         if 'enemy' not in game_places[game_location]:
@@ -218,5 +228,22 @@ def explore_game_play(token_list):
         return com.show_combat_text(game_places[game_location]['enemy'].lower())
 
     elif token_list[0] == 'inventory':
-        game_state = 'inventory'
-        return im.show_inventory_text()
+        return sts.show_status_text(token_list[0])
+
+    elif token_list[0] == 'equipment':
+        return sts.show_status_text(token_list[0])
+
+    elif token_list[0] == 'actions':
+        return sts.show_status_text(token_list[0])
+
+    elif token_list[0] == 'location':
+        return show_current_place()
+
+    elif token_list[0] == 'equip':
+        return im.inventory_game_play(token_list)
+
+    elif token_list[0] == 'unequip':
+        return im.inventory_game_play(token_list)
+
+    elif token_list[0] == 'use':
+        return im.inventory_game_play(token_list)

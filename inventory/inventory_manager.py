@@ -12,7 +12,7 @@ game_items = {
         'equippable': False,
         'equipped': False,
         'acquired': False,
-        'effect_active': False
+        'used': False
     },
     'wooden staff': {
         'name': 'Wooden Staff',
@@ -27,7 +27,7 @@ game_items = {
         'name': 'Shimmering Crystal',
         'source': 'Sylvanwood Forest',
         'description': 'Allows you to cast protective spells in battle.',
-        'found_text': 'You defeated the Guardian Serpent and claimed the Vial.',
+        'found_text': 'You found a Shimmering Crystal in a hidden grove.',
         'equippable': False,
         'equipped': False,
         'acquired': False,
@@ -37,7 +37,7 @@ game_items = {
         'name': 'Enchanted Armour',
         'source': 'Crystal Cave',
         'description': 'enhances your defence against adversaries.',
-        'found_text': '',
+        'found_text': 'You found the Enchanted Armour within the cave.',
         'equippable': True,
         'equipped': False,
         'acquired': False
@@ -46,7 +46,7 @@ game_items = {
         'name': 'Magical Pendant',
         'source': 'Whispering Willows',
         'description': 'increases your magical powers allowing you to cast spells with your staff.',
-        'found_text': '',
+        'found_text': 'You found a Magical Pendant by a tombstone.',
         'equippable': True,
         'equipped': False,
         'acquired': False
@@ -55,26 +55,28 @@ game_items = {
         'name': 'Invincibility Potion',
         'source': 'Cloudcrest Peaks',
         'description': 'Grants you temporary invincibility during a battle.',
-        'found_text': '',
+        'found_text': 'You found an invincibility potion at the summit',
         'equippable': False,
         'equipped': False,
         'acquired': False,
+        'used': False,
         'effect_active': False
     },
     'ancient scroll': {
         'name': 'Ancient Scroll',
         'source': 'Forsaken Wastes',
         'description': 'Teaches you ancient combat techniques, increasing your attack power.',
-        'found_text': '',
+        'found_text': 'You found an Ancient scroll buried within the sand.',
         'equippable': False,
         'equipped': False,
-        'acquired': False
+        'acquired': False,
+        'used': False
     },
     'inner sanctum key': {
         'name': 'Inner Sanctum Key',
         'source': 'Shadowcrypt',
         'description': 'Allows access into the Inner Sanctum',
-        'found_text': '',
+        'found_text': 'You located the key to the Inner Sanctum.',
         'equippable': False,
         'equipped': False,
         'acquired': False
@@ -102,14 +104,13 @@ def toggle_equip_status(action, item):
         match item:
             case 'wooden staff':
                 attack += 4
-                pass
 
             case 'enchanted armour':
                 health += 25
 
             case 'magical pendant':
                 attack += 5
-                pass
+
         if action == 'unequip':
             game_items[item]['equipped'] = False;
             health *= -1
@@ -124,9 +125,9 @@ def toggle_equip_status(action, item):
 
 def inventory_game_play(token_list):
     match token_list[0]:
-        case "back":
-            cm.game_state = 'explore'
-            return cm.show_current_place()
+        # case "back":
+        #     cm.game_state = 'explore'
+        #     return cm.show_current_place()
 
         case "equip":
             if len(token_list) <= 1:
@@ -134,8 +135,12 @@ def inventory_game_play(token_list):
             else:
                 action = token_list.pop(0)
                 item_name = ' '.join(token_list)
-                toggle_equip_status(action, item_name)
-                return show_inventory_text()
+                if item_name in game_items:
+                    toggle_equip_status(action, item_name)
+                    message = 'You equipped the ' + game_items[item_name]['name']
+                    return tuple(('Message', message))
+                else:
+                    return tuple(('Error', 'That is not a valid item.'))
 
         case "unequip":
             if len(token_list) <= 1:
@@ -143,33 +148,25 @@ def inventory_game_play(token_list):
             else:
                 action = token_list.pop(0)
                 item_name = ' '.join(token_list)
-                toggle_equip_status(action, item_name)
-                return show_inventory_text()
+                if item_name in game_items:
+                    toggle_equip_status(action, item_name)
+                    message = 'You unequipped the ' + game_items[item_name]['name']
+                    return tuple(('Message', message))
+                else:
+                    return tuple(('Error', 'That is not a valid item.'))
+                # return show_inventory_text()
         case "use":
-            pass
+            if len(token_list) <= 1:
+                return tuple(('Error', 'Incorrect amount of arguments.'))
+            else:
+                token_list.pop(0)
+                item_name = ' '.join(token_list)
+                if not item_name == 'ancient scroll':
+                    return tuple(('Message', 'You cannot use this item like this.'))
+                else:
+                    if game_items['ancient scroll']['used']:
+                        return tuple(('Message', 'You already learned from the scroll'))
+                    else:
+                        game_items['ancient scroll']['used'] = True
+                        com.player['stats']['attack'] += 4
 
-
-def show_inventory_text(intial_text=None):
-    inventory_list = []
-
-    if intial_text is not None:
-        inventory_list.append(textwrap.fill(intial_text, 35))
-        inventory_list.append('\n\n')
-
-    inventory_list.append('Inventory:\n')
-    for item in game_items:
-        if game_items[item]['acquired']:
-            inventory_list.append(game_items[item]['name'])
-            inventory_list.append('\n')
-            inventory_list.append(textwrap.fill(game_items[item]['description'], 35))
-            inventory_list.append('\n\n')
-
-    inventory_list.append('Equipped:\n')
-    for item in game_items:
-        if game_items[item]['equipped']:
-            inventory_list.append(game_items[item]['name'])
-            inventory_list.append('\n\n')
-
-    inventory_list.append('Actions:\nback\nequip <item>\nunequip <item>\nuse <item>')
-
-    return ''.join(inventory_list)
