@@ -62,7 +62,7 @@ game_places = {
     'whispering willows': {
         'story': 'West of Elmbrook, you encounter the eerie Whispering Willows — a haunted grove filled with '
                  'enigmatic whispers. There, you discovers a magical pendant that increases your magical powers '
-                 'allowing you to cast spells with.'
+                 'allowing you to cast spells with '
                  'your staff.\n',
         'story_directions':
             'East: Elmbrook Village\n',
@@ -101,7 +101,7 @@ game_places = {
         'visited message': 'You are in the Forsaken Wastes.'
     },
     'azure lake': {
-        'story': 'Further south, you arrives at the tranquil Azure Lake, guarded by a mythical water serpent. if you '
+        'story': 'Further south, you arrive at the tranquil Azure Lake, guarded by a mythical water serpent. if you '
                  'can defeat the serpent, you may claim a vial of healing water, which fully restores your health.\n',
         'story_directions':
             'North: Forsaken Wastes.\n',
@@ -206,6 +206,9 @@ def explore_game_play(token_list):
                 return im.show_inventory_text("You found nothing...")
 
     elif token_list[0] == 'engage':
+        if 'enemy' not in game_places[game_location]:
+            return Exception('This region has no enemies.')
+
         game_state = 'combat'
         return com.show_combat_text(game_places[game_location]['enemy'].lower())
 

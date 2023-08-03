@@ -33,18 +33,19 @@ def validate_list(input_string, game_state):
 
     match game_state:
         case "explore":
-            for string in input_string.split():
-                if string.lower() in _explore_tokens:
-                    result.append(string.lower())
+            if input_string.lower() in _explore_tokens:
+                result.append(input_string.lower())
         case "combat":
-            for string in input_string.split():
-                if string.lower() in _combat_tokens:
-                    result.append(string.lower())
+            if input_string.lower() in _combat_tokens:
+                result.append(input_string.lower())
 
         case "inventory":
-            for string in input_string.split():
-                if string.lower() in _inventory_tokens:
-                    result.append(string.lower())
+            string_list = [
+                x.lower() for x in input_string.split()
+            ]
+            print(string_list)
+            if string_list[0] in _inventory_tokens:
+                result = string_list
         case _:
             return Exception("Provided commands did not match valid tokens for state:" + game_state)
     if len(result) == 0:
