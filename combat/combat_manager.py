@@ -57,8 +57,9 @@ def combat_game_play(token_list):
             enemy['health'] = enemy['health'] - player['stats']['attack']
 
             if not im.game_items['invincibility potion']['effect_active']:
-                im.game_items['invincibility potion']['effect_active'] = False
                 player['stats']['health'] = player['stats']['health'] - enemy['attack']
+            else:
+                im.game_items['invincibility potion']['effect_active'] = False
 
             if player['stats']['health'] <= 0:
                 return sts.show_status_text('game over', player['death_message'])
