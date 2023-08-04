@@ -27,9 +27,6 @@ _combat_tokens = {
     "run"
 }
 
-_inventory_tokens = {
-}
-
 
 def validate_list(input_string, game_state):
     result = []
