@@ -13,11 +13,9 @@ _explore_tokens = {
     "west",
     "down",
     "up",
-    "location",
     "equipment",
     "back",
     "actions",
-    # "discard",
     "equip",
     "unequip",
     "use"
@@ -35,7 +33,7 @@ _combat_tokens = {
 
 
 # Validates passed list using provided game_state and above valid token lists
-def validate_list(input_string, game_state):
+def validate_list(input_string: str, game_state: str):
     """
     Validates input based on game_state
     :param input_string: A string of game commands

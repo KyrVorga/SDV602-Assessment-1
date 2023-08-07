@@ -1,12 +1,20 @@
+"""
+This is the command parser for Shadowcrypt, it handles commands and movement
+"""
+
 import command.token as tkn
 import inventory.inventory_manager as im
 import combat.combat_manager as com
 import status.status_manager as sts
 import textwrap
 
-# Brief comment about how the following lines work
+# the current location of the player
 game_location = 'elmbrook village'
-game_state = 'explore'  # explore / combat / inventory
+
+# the current state of the game, either explore or combat
+game_state = 'explore'
+
+# all the information regarding the world
 game_places = {
     'elmbrook village': {
         'story':
@@ -149,10 +157,21 @@ game_places = {
 }
 
 
-def interpret_commands(token_list):
+def interpret_commands(token_list: str):
+    """
+    Takes user input commands and decides where to send it.
+    :param token_list: user input from window
+    :return: Text to display or a message tuple
+    """
+
+    # validate the tokens based on game state
     tokens = tkn.validate_list(token_list, game_state)
+
+    # if type is tuple than an error has occurred, pass to window.
     if type(tokens) is tuple:
         return tokens
+
+    # based on game state pass tokens to respective game_play manager
     match game_state:
         case "explore":
             result = explore_game_play(tokens)
@@ -164,87 +183,111 @@ def interpret_commands(token_list):
 
 
 def show_current_place():
-    """Gets the story at the game_state place
-
-    Returns:
-        string: the story at the current place
     """
+    Gets the story at the game_state place
+    :return: the story at the current place
+    """
+
     global game_location
     story_list = []
+
+    # if location is not visited, set to visited and add story text to story_list
     if not game_places[game_location]['visited']:
         game_places[game_location]['visited'] = True
         story_list.append(textwrap.fill(game_places[game_location]['story'], 35))
+
+    # else location has been visited, add visited text to story_list
     else:
         story_list.append(textwrap.fill(game_places[game_location]['visited message'], 35))
 
+    # if there is an undefeated enemy at the location append its description to story_list
     if "enemy" in game_places[game_location]:
         location_enemy = game_places[game_location]["enemy"].lower()
+
+        # check if enemy is defeated
         if not com.game_enemies[location_enemy]["defeated"]:
             story_list.append('\n\n')
             story_list.append(textwrap.fill(com.game_enemies[location_enemy]["description"], 35))
 
+    # append the locations directions regardless of above
     story_list.append('\n\n')
     story_list.append(game_places[game_location]['story_directions'])
 
     return ''.join(story_list)
 
 
-def explore_game_play(token_list):
+def explore_game_play(token_list: list):
+    """
+    Handles the explore gameplay
+    :param token_list: A list of explore game tokens
+    :return: Text to display on window
+    """
+
     global game_location
     global game_state
 
+    # if first token is a valid direction move the player there
     if token_list[0] in game_places[game_location]['directions']:
         direction = token_list[0]
         proposed_location = game_places[game_location]['directions'][direction].lower()
-        if proposed_location is not None:
-            if proposed_location == 'inner sanctum' and not im.game_items['inner sanctum key']['acquired']:
-                return tuple(('Message', 'The way is locked...'))
-            elif proposed_location == 'elmbrook village' and im.game_items['jaldabaoth\'s staff']['acquired']:
-                return sts.show_status_text(
-                    'game over',
-                    'You have defeated the Great Mage Jaldabaoth who has been plaguing the lands, well done great hero!'
-                )
-            else:
-                game_location = proposed_location
-                return show_current_place()
+        
+        # player must have a key to enter the inner sanctum
+        if proposed_location == 'inner sanctum' and not im.game_items['inner sanctum key']['acquired']:
+            return tuple(('Message', 'The way is locked...'))
+        
+        # if the player has jaldabaoth's staff and goes back to the village display endgame text
+        elif proposed_location == 'elmbrook village' and im.game_items['jaldabaoth\'s staff']['acquired']:
+            return sts.show_status_text(
+                'game over',
+                'You have defeated the Great Mage Jaldabaoth who has been plaguing the lands, well done great hero!'
+            )
+        
+        # otherwise display normal text and update game_location
+        else:
+            game_location = proposed_location
+            return show_current_place()
+    else:
+        match token_list[0]:
+            case 'search':
+                # check if location has an item
+                if 'item' in game_places[game_location]:
+                    item_name = game_places[game_location]['item'].lower()
+                    
+                    # if item is not acquired, set to acquired and return found_text
+                    if not im.game_items[item_name]['acquired']:
+                        im.game_items[item_name]['acquired'] = True
+                        message = im.game_items[item_name]['found_text']
+                        return tuple(('Message', message))
+                    
+                    # else item is already found
+                    else:
+                        return tuple(('Message', "You found nothing..."))
 
-    elif token_list[0] == 'search':
-        if 'item' in game_places[game_location]:
-            item_name = game_places[game_location]['item'].lower()
-            if not im.game_items[item_name]['acquired']:
-                im.game_items[item_name]['acquired'] = True
-                message = im.game_items[item_name]['found_text']
-                return tuple(('Message', message))
-                # return im.show_inventory_text(im.game_items[item_name]['found_text'])
-            else:
-                return tuple(('Message', "You found nothing..."))
-                # return im.show_inventory_text("You found nothing...")
+            case 'engage':
+                # if there are no enemies return message
+                if 'enemy' not in game_places[game_location]:
+                    return tuple(('Message', 'This region has no enemies.'))
 
-    # Change to a switch within an else block
-    elif token_list[0] == 'engage':
-        if 'enemy' not in game_places[game_location]:
-            return tuple(('Message', 'This region has no enemies.'))
+                # otherwise set state to combat and return combat text
+                game_state = 'combat'
+                return com.show_combat_text(game_places[game_location]['enemy'].lower())
 
-        game_state = 'combat'
-        return com.show_combat_text(game_places[game_location]['enemy'].lower())
+            # status related cases are passed to status_manager
+            case 'inventory':
+                return sts.show_status_text(token_list[0])
 
-    elif token_list[0] == 'inventory':
-        return sts.show_status_text(token_list[0])
+            case 'equipment':
+                return sts.show_status_text(token_list[0])
 
-    elif token_list[0] == 'equipment':
-        return sts.show_status_text(token_list[0])
+            case 'actions':
+                return sts.show_status_text(token_list[0])
 
-    elif token_list[0] == 'actions':
-        return sts.show_status_text(token_list[0])
+            # inventory related cases are passed to inventory_manager
+            case 'equip':
+                return im.inventory_game_play(token_list)
 
-    elif token_list[0] == 'location':
-        return show_current_place()
+            case 'unequip':
+                return im.inventory_game_play(token_list)
 
-    elif token_list[0] == 'equip':
-        return im.inventory_game_play(token_list)
-
-    elif token_list[0] == 'unequip':
-        return im.inventory_game_play(token_list)
-
-    elif token_list[0] == 'use':
-        return im.inventory_game_play(token_list)
+            case 'use':
+                return im.inventory_game_play(token_list)

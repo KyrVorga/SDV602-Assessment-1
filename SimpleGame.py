@@ -1,9 +1,9 @@
 """ 
-A comment describing the game module
+This is the main application for the Shadowcrypt text-adventure game
 """
+
 import PySimpleGUI as sg
 import textwrap
-import command.token as tkn
 import command.command_manager as cm
 
 
@@ -15,7 +15,10 @@ def make_a_window():
         window: the handle to the game window
     """
 
-    sg.theme('DarkTeal10')  # please make your windows
+    # sets the theme of the window
+    sg.theme('DarkTeal10')
+
+    # user text input
     prompt_input = [
         sg.Input(
             key='-IN-',
@@ -23,6 +26,8 @@ def make_a_window():
             font='Any 12'
         )
     ]
+
+    # enter and exit buttons
     buttons = [
         sg.Button(
             'Enter',
@@ -34,6 +39,8 @@ def make_a_window():
             expand_x=True
         )
     ]
+
+    # output text, displays messages
     item_text = [
         sg.Text(
             '',
@@ -42,6 +49,7 @@ def make_a_window():
         ),
     ]
 
+    # location image
     image = [
         sg.Image(
             'images/forest.png',
@@ -50,6 +58,7 @@ def make_a_window():
         )
     ]
 
+    # Main text area for story, inventory and combat functions
     story_text = [
         sg.Text(
             cm.show_current_place(),
@@ -62,6 +71,7 @@ def make_a_window():
         )
     ]
 
+    # create two columns to align content.
     column_left = sg.Column(
         [
             image,
@@ -76,8 +86,10 @@ def make_a_window():
         element_justification='l'
     )
 
+    # merge columns into layout
     layout = [
         column_left,
+        sg.VSeparator(),
         column_right
     ]
 
@@ -85,34 +97,39 @@ def make_a_window():
 
 
 if __name__ == "__main__":
-    # testing for now
-    # print(show_current_place())
-    # current_story = game_play('North')
-    # print(show_current_place())
-
     # A persistent window - stays until "Exit" is pressed
     window = make_a_window()
 
     while True:
         event, values = window.read()
-        # print(event)
-        if event == 'Enter':
-            story = cm.interpret_commands(values['-IN-'].lower())
 
+        if event == 'Enter':
+            # Get string from user input
+            user_input = values['-IN-'].lower()
+
+            # run game functions and get text to display in window
+            story = cm.interpret_commands(user_input)
+
+            # if a message is not returned then update the window with story text
             if type(story) != tuple:
                 window['-IN-'].update('')
                 window['-OUTPUT-'].update(story)
                 window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
                 window['-MESSAGE-'].update('')
+
+            # otherwise it's a message
             else:
+                # if message is not an error update the window
                 if not story[0] == 'Error':
                     wrapped = textwrap.fill(story[1], 20)
                     window['-MESSAGE-'].update(wrapped)
                     window['-IN-'].update('')
 
+        # User quit event
         elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
             break
 
+        # user did nothing or something invalid so pass.
         else:
             pass
 
