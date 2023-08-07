@@ -108,6 +108,7 @@ def combat_game_play(token_list):
     return show_combat_text(enemy_name.lower())
 
 
+# Try change to a comprehension
 def show_combat_text(enemy):
     combat_list = [
         'Name: ',

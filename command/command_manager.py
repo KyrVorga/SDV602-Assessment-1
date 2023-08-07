@@ -220,6 +220,7 @@ def explore_game_play(token_list):
                 return tuple(('Message', "You found nothing..."))
                 # return im.show_inventory_text("You found nothing...")
 
+    # Change to a switch within an else block
     elif token_list[0] == 'engage':
         if 'enemy' not in game_places[game_location]:
             return tuple(('Message', 'This region has no enemies.'))
