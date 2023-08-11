@@ -62,12 +62,13 @@ def make_a_window():
     story_text = [
         sg.Text(
             cm.show_current_place(),
-            # size=(100, 4),
+            size=(30, 40),
             auto_size_text=True,
-            expand_x=True,
+            # expand_x=True,
             expand_y=True,
             font='Any 12',
-            key='-OUTPUT-'
+            key='-OUTPUT-',
+
         )
     ]
 
@@ -83,7 +84,10 @@ def make_a_window():
     )
     column_right = sg.Column(
         [story_text],
-        element_justification='l'
+        element_justification='l',
+        scrollable=True,
+        vertical_scroll_only=True,
+        # expand_y=True
     )
 
     # merge columns into layout

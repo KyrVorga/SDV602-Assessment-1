@@ -1,19 +1,6 @@
-import command.command_manager as cm
 import combat.combat_manager as com
-import textwrap
-import command.token as tkn
 
 game_items = {
-    'vial of healing water': {
-        'name': 'Vial of Healing Water',
-        'source': 'Guardian Serpent',
-        'description': 'Fully restores your health in combat.',
-        'found_text': 'You defeated the Guardian Serpent and claimed the Vial.',
-        'equippable': False,
-        'equipped': False,
-        'acquired': False,
-        'used': False
-    },
     'wooden staff': {
         'name': 'Wooden Staff',
         'source': 'Elmbrook Village',
@@ -72,6 +59,16 @@ game_items = {
         'acquired': False,
         'used': False
     },
+    'vial of healing water': {
+        'name': 'Vial of Healing Water',
+        'source': 'Guardian Serpent',
+        'description': 'Fully restores your health in combat.',
+        'found_text': 'You defeated the Guardian Serpent and claimed the Vial.',
+        'equippable': False,
+        'equipped': False,
+        'acquired': False,
+        'used': False
+    },
     'inner sanctum key': {
         'name': 'Inner Sanctum Key',
         'source': 'Shadowcrypt',
@@ -112,11 +109,11 @@ def toggle_equip_status(action, item):
                 attack += 5
 
         if action == 'unequip':
-            game_items[item]['equipped'] = False;
+            game_items[item]['equipped'] = False
             health *= -1
             attack *= -1
         else:
-            game_items[item]['equipped'] = True;
+            game_items[item]['equipped'] = True
 
         com.player['stats']['attack'] += attack
         com.player['stats']['max_health'] += health
@@ -169,4 +166,3 @@ def inventory_game_play(token_list):
                     else:
                         game_items['ancient scroll']['used'] = True
                         com.player['stats']['attack'] += 4
-

@@ -125,7 +125,6 @@ game_places = {
         'visited': False,
         'visited message': 'You are at the Azure Lake.',
         'enemy': 'Guardian Serpent',
-        'item': 'Vial of Healing Water'
     },
     'shadowcrypt': {
         'story': 'The sage back in Elmbrook told you how to enter the Shadowcrypt, the labyrinthine crypt beneath the '
@@ -194,11 +193,11 @@ def show_current_place():
     # if location is not visited, set to visited and add story text to story_list
     if not game_places[game_location]['visited']:
         game_places[game_location]['visited'] = True
-        story_list.append(textwrap.fill(game_places[game_location]['story'], 35))
+        story_list.append(textwrap.fill(game_places[game_location]['story'], 30))
 
     # else location has been visited, add visited text to story_list
     else:
-        story_list.append(textwrap.fill(game_places[game_location]['visited message'], 35))
+        story_list.append(textwrap.fill(game_places[game_location]['visited message'], 30))
 
     # if there is an undefeated enemy at the location append its description to story_list
     if "enemy" in game_places[game_location]:
@@ -207,7 +206,7 @@ def show_current_place():
         # check if enemy is defeated
         if not com.game_enemies[location_enemy]["defeated"]:
             story_list.append('\n\n')
-            story_list.append(textwrap.fill(com.game_enemies[location_enemy]["description"], 35))
+            story_list.append(textwrap.fill(com.game_enemies[location_enemy]["description"], 30))
 
     # append the locations directions regardless of above
     story_list.append('\n\n')
