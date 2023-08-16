@@ -4,7 +4,7 @@ import combat.combat_manager as com
 import textwrap
 
 
-def show_status_text(to_show, initial_text=None):
+def show_status_text(to_show: str, initial_text=None):
     text_list = []
 
     if initial_text is not None:

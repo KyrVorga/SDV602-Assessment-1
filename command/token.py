@@ -3,8 +3,7 @@ Input validation for command_manager.py
 """
 
 # Valid tokens for exploration game state
-_explore_tokens = {
-    "inventory",
+explore_tokens = {
     "engage",
     "search",
     "north",
@@ -13,22 +12,26 @@ _explore_tokens = {
     "west",
     "down",
     "up",
-    "equipment",
-    "back",
-    "actions",
+}
+
+inventory_tokens = {
     "equip",
     "unequip",
     "use"
 }
 
 # Valid tokens for combat game state
-_combat_tokens = {
+combat_tokens = {
     "attack",
-    "block",
     "heal",
     "potion",
-    "magic",
     "run"
+}
+
+status_tokens = {
+    "inventory",
+    "equipment",
+    "actions",
 }
 
 
@@ -51,12 +54,13 @@ def validate_list(input_string: str, game_state: str):
             ]
 
             # add to result if token is a valid explore token
-            if string_list[0] in _explore_tokens:
+            if string_list[0] in explore_tokens or string_list[0] in status_tokens or string_list[
+                    0] in inventory_tokens:
                 result = string_list
 
         case "combat":
             # add to result if token is a valid combat token and apply lower()
-            if input_string.lower() in _combat_tokens:
+            if input_string.lower() in combat_tokens:
                 result.append(input_string.lower())
 
         # exists only to remove an IDE warning, the default will never be reached.

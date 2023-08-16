@@ -166,26 +166,37 @@ game_places = {
 }
 
 
-def interpret_commands(token_list: str):
+def interpret_commands(user_input: str):
     """
     Takes user input commands and decides where to send it.
-    :param token_list: user input from window
+    :param user_input: user input from window
     :return: Text to display or a message tuple
     """
 
     # validate the tokens based on game state
-    tokens = tkn.validate_list(token_list, game_state)
+    tokens = tkn.validate_list(user_input, game_state)
 
     # if type is tuple than an error has occurred, pass to window.
     if type(tokens) is tuple:
         return tokens
 
+    action = tokens.pop(0)
+
     # based on game state pass tokens to respective game_play manager
     match game_state:
         case "explore":
-            result = explore_game_play(tokens)
+            if action in tkn.explore_tokens:
+                result = explore_game_play(action)
+
+            elif action in tkn.inventory_tokens:
+                item_name = " ".join(tokens)
+                result = im.inventory_game_play(action, item_name)
+
+            elif action in tkn.status_tokens:
+                result = sts.show_status_text(action)
+
         case "combat":
-            result = com.combat_game_play(tokens)
+            result = com.combat_game_play(action)
         case _:
             result = ""
     return result
@@ -225,10 +236,10 @@ def show_current_place():
     return "".join(story_list)
 
 
-def explore_game_play(token_list: list):
+def explore_game_play(action: str):
     """
     Handles the explore gameplay
-    :param token_list: A list of explore game tokens
+    :param action: An explore game token
     :return: Text to display on window
     """
 
@@ -236,9 +247,8 @@ def explore_game_play(token_list: list):
     global game_state
 
     # if first token is a valid direction move the player there
-    if token_list[0] in game_places[game_location]["directions"]:
-        direction = token_list[0]
-        proposed_location = game_places[game_location]["directions"][direction].lower()
+    if action in game_places[game_location]["directions"]:
+        proposed_location = game_places[game_location]["directions"][action].lower()
 
         # player must have a key to enter the inner sanctum
         if proposed_location == "inner sanctum" and not im.game_items["inner sanctum key"]["acquired"]:
@@ -255,55 +265,28 @@ def explore_game_play(token_list: list):
         else:
             game_location = proposed_location
             return show_current_place()
-    else:
-        match token_list[0]:
-            case "search":
-                # check if location has an item
-                if game_places[game_location]["item"] is None:
-                    return tuple(("Message", "You found nothing..."))
 
-                item_name = game_places[game_location]["item"].lower()
+    elif action == "search":
+        # check if location has an item
+        if game_places[game_location]["item"] is None:
+            return tuple(("Message", "You found nothing..."))
 
-                # check if item is acquired
-                if im.game_items[item_name]["acquired"]:
-                    return tuple(("Message", "You found nothing..."))
+        item_name = game_places[game_location]["item"].lower()
 
-                # set item to acquired and return found_text
-                im.game_items[item_name]["acquired"] = True
-                message = im.game_items[item_name]["found_text"]
-                return tuple(("Message", message))
+        # check if item is acquired
+        if im.game_items[item_name]["acquired"]:
+            return tuple(("Message", "You found nothing..."))
 
-            case "engage":
-                # check if there are enemies
-                if game_places[game_location]["enemy"] is None:
-                    return tuple(("Message", "This region has no enemies."))
+        # set item to acquired and return found_text
+        im.game_items[item_name]["acquired"] = True
+        message = im.game_items[item_name]["found_text"]
+        return tuple(("Message", message))
 
-                # set state to combat and return combat text
-                game_state = "combat"
-                return com.show_combat_text(game_places[game_location]["enemy"].lower())
+    elif action == "engage":
+        # check if there are enemies
+        if game_places[game_location]["enemy"] is None:
+            return tuple(("Message", "This region has no enemies."))
 
-            # status related cases are passed to status_manager
-            case "inventory":
-                return sts.show_status_text(token_list[0])
-
-            case "equipment":
-                return sts.show_status_text(token_list[0])
-
-            case "actions":
-                return sts.show_status_text(token_list[0])
-
-            # inventory related cases are passed to inventory_manager
-            case "equip":
-                action = token_list.pop(0)
-                item_name = " ".join(token_list)
-                return im.inventory_game_play(action, item_name)
-
-            case "unequip":
-                action = token_list.pop(0)
-                item_name = " ".join(token_list)
-                return im.inventory_game_play(action, item_name)
-
-            case "use":
-                action = token_list.pop(0)
-                item_name = " ".join(token_list)
-                return im.inventory_game_play(action, item_name)
+        # set state to combat and return combat text
+        game_state = "combat"
+        return com.show_combat_text(game_places[game_location]["enemy"].lower())

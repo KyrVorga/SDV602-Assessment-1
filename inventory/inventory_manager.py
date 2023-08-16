@@ -15,7 +15,7 @@ game_items = {
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
         "equip_effect": lambda player, action: (
-            player["stats"].update({"attack": player["stats"]["attack"] + (4 if action == "equip" else -4)})
+            player["set_stat"](player["stats"], "attack", (4 if action == "equip" else -4))
         )
     },
     "enchanted armour": {
@@ -32,10 +32,8 @@ game_items = {
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
         "equip_effect": lambda player, action: (
-            player["stats"].update({
-                "health": player["stats"]["health"] + (25 if action == "equip" else -25),
-                "max_health": player["stats"]["max_health"] + (25 if action == "equip" else -25)
-            })
+            player["set_stat"](player["stats"], "health", (25 if action == "equip" else -25)),
+            player["set_stat"](player["stats"], "max_health", (25 if action == "equip" else -25))
         )
     },
     "magical pendant": {
@@ -52,7 +50,7 @@ game_items = {
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
         "equip_effect": lambda player, action: (
-            player["stats"].update({"attack": player["stats"]["attack"] + (5 if action == "equip" else -5)})
+            player["set_stat"](player["stats"], "attack", (5 if action == "equip" else -5))
         )
     },
     "invincibility potion": {
@@ -65,6 +63,9 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
+        "use_item": lambda item: (
+            item.update({"used": True})
+        ),
         "effect_active": False
     },
     "ancient scroll": {
@@ -81,7 +82,7 @@ game_items = {
             item.update({"used": True})
         ),
         "use_effect": lambda player: (
-            player["stats"].update({"attack": player["stats"]["attack"] + 5})
+            player["set_stat"](player["stats"], "attack", 5)
         )
     },
     "vial of healing water": {
@@ -98,7 +99,7 @@ game_items = {
             item.update({"used": True})
         ),
         "use_effect": lambda player: (
-            player["stats"].update({"health": player["stats"]["max_health"]})
+            player["set_stat"](player["stats"], "health", player["stats"]["max_health"])
         )
     },
     "inner sanctum key": {
@@ -126,7 +127,7 @@ game_items = {
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
         "equip_effect": lambda player, action: (
-            player["stats"].update({"attack": player["stats"]["attack"] + (15 if action == "equip" else -15)})
+            player["set_stat"](player["stats"], "attack", (15 if action == "equip" else -15))
         )
     },
 }

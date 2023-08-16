@@ -9,6 +9,9 @@ game_enemies = {
     "guardian serpent": {
         "name": "Guardian Serpent",
         "health": 10,
+        "take_damage": lambda entity, damage: (
+            entity.update({"health": entity["health"] - damage})
+        ),
         "attack": 1000,
         "reward": "Vial of Healing Water",
         "location": "azure lake",
@@ -19,6 +22,9 @@ game_enemies = {
     "great mage jaldabaoth": {
         "name": "Great Mage Jaldabaoth",
         "health": 100,
+        "take_damage": lambda entity, damage: (
+            entity.update({"health": entity["health"] - damage})
+        ),
         "attack": 10,
         "location": "inner sanctum",
         "reward": "Jaldabaoth's Staff",
@@ -38,31 +44,41 @@ player = {
     "stats": {
         "max_health": 25,
         "health": 25,
-        "attack": 1,
+        "attack": 1
     },
+    "set_stat": lambda stats, stat, value: (
+        stats.update({stat: stats[stat] + value})
+    ),
+    "take_damage": lambda stats, damage: (
+        stats.update({"health": stats["health"] - damage})
+    ),
     "death_message": "You died... Elmbrook Village is doomed."
 }
 
 
-def combat_game_play(token_list):
+def combat_game_play(action):
     enemy_name = cm.game_places[cm.game_location]["enemy"].lower()
     enemy = game_enemies[enemy_name]
+
     if player["stats"]["health"] <= 0:
-        return tuple(("Message", "You are dead... Dead things cat't do much..."))
-    match token_list[0]:
+        return tuple(("Message", "You are dead... Dead things can't do much..."))
+
+    match action:
         case "run":
             cm.game_state = "explore"
             return cm.show_current_place()
+
         case "attack":
-            enemy["health"] = enemy["health"] - player["stats"]["attack"]
+            enemy["take_damage"](enemy, player["stats"]["attack"])
 
             if not im.game_items["invincibility potion"]["effect_active"]:
-                player["stats"]["health"] = player["stats"]["health"] - enemy["attack"]
+                player["take_damage"](player["stats"], enemy["attack"])
             else:
                 im.game_items["invincibility potion"]["effect_active"] = False
 
             if player["stats"]["health"] <= 0:
                 return sts.show_status_text("game over", player["death_message"])
+
             elif enemy["health"] <= 0:
                 cm.game_state = "explore"
                 for item in im.game_items:
@@ -73,12 +89,6 @@ def combat_game_play(token_list):
 
             return show_combat_text(enemy_name.lower())
 
-        case "block":
-            if not im.game_items["shimmering crystal"]["acquired"]:
-                return tuple(("Message", "You can't perform this action"))
-            else:
-                return tuple(("Message", "You blocked the attack."))
-
         case "heal":
             if not im.game_items["vial of healing water"]["acquired"]:
                 return tuple(("Message", "You can't perform this action"))
@@ -86,9 +96,8 @@ def combat_game_play(token_list):
                 if im.game_items["vial of healing water"]["used"]:
                     return tuple(("Message", "You already used this item."))
                 else:
-                    max_health = player["stats"]["max_health"]
-                    player["stats"]["health"] = max_health
-                    im.game_items["vial of healing water"]["used"] = True
+                    player["set_stat"](player["stats"], "health", player["stats"]["max_health"])
+                    im.game_items["vial of healing water"]["use_item"]()
                     return tuple(("Message", "You restored your health."))
 
         case "potion":
@@ -98,7 +107,7 @@ def combat_game_play(token_list):
                 if im.game_items["invincibility potion"]["used"]:
                     return tuple(("Message", "You already used this item."))
                 else:
-                    im.game_items["invincibility potion"]["used"] = True
+                    im.game_items["invincibility potion"]["use_item"]()
                     im.game_items["invincibility potion"]["effect_active"] = True
                     return tuple(("Message", "You are invincible until after your next attack."))
 
