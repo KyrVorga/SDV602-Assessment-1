@@ -16,26 +16,26 @@ def make_a_window():
     """
 
     # sets the theme of the window
-    sg.theme('DarkTeal10')
+    sg.theme("DarkTeal10")
 
     # user text input
     prompt_input = [
         sg.Input(
-            key='-IN-',
+            key="-IN-",
             size=20,
-            font='Any 12'
+            font="Any 12"
         )
     ]
 
     # enter and exit buttons
     buttons = [
         sg.Button(
-            'Enter',
+            "Enter",
             bind_return_key=True,
             expand_x=True
         ),
         sg.Button(
-            'Exit',
+            "Exit",
             expand_x=True
         )
     ]
@@ -43,8 +43,8 @@ def make_a_window():
     # output text, displays messages
     item_text = [
         sg.Text(
-            '',
-            font='Any 12',
+            "",
+            font="Any 12",
             key="-MESSAGE-"
         ),
     ]
@@ -52,7 +52,7 @@ def make_a_window():
     # location image
     image = [
         sg.Image(
-            'images/forest.png',
+            "images/forest.png",
             size=(180, 180),
             key="-IMG-"
         )
@@ -66,8 +66,8 @@ def make_a_window():
             auto_size_text=True,
             # expand_x=True,
             expand_y=True,
-            font='Any 12',
-            key='-OUTPUT-',
+            font="Any 12",
+            key="-OUTPUT-",
 
         )
     ]
@@ -80,24 +80,24 @@ def make_a_window():
             buttons,
             item_text
         ],
-        element_justification='c'
+        element_justification="c"
     )
     column_right = sg.Column(
         [story_text],
-        element_justification='l',
+        element_justification="l",
         scrollable=True,
         vertical_scroll_only=True,
         # expand_y=True
     )
 
-    # merge columns into layout
+    # merge columns into layout and add a seperator
     layout = [
         column_left,
         sg.VSeparator(),
         column_right
     ]
 
-    return sg.Window('Adventure Game', [layout], size=(500, 400))
+    return sg.Window("Adventure Game", [layout], size=(500, 400))
 
 
 if __name__ == "__main__":
@@ -107,30 +107,30 @@ if __name__ == "__main__":
     while True:
         event, values = window.read()
 
-        if event == 'Enter':
+        if event == "Enter":
             # Get string from user input
-            user_input = values['-IN-'].lower()
+            user_input = values["-IN-"].lower()
 
             # run game functions and get text to display in window
             story = cm.interpret_commands(user_input)
 
             # if a message is not returned then update the window with story text
             if type(story) != tuple:
-                window['-IN-'].update('')
-                window['-OUTPUT-'].update(story)
-                window['-IMG-'].update('images/' + cm.game_places[cm.game_location]['image'], size=(180, 180))
-                window['-MESSAGE-'].update('')
+                window["-IN-"].update("")
+                window["-OUTPUT-"].update(story)
+                window["-IMG-"].update("images/" + cm.game_places[cm.game_location]["image"], size=(180, 180))
+                window["-MESSAGE-"].update("")
 
-            # otherwise it's a message
+            # otherwise it"s a message
             else:
                 # if message is not an error update the window
-                if not story[0] == 'Error':
+                if not story[0] == "Error":
                     wrapped = textwrap.fill(story[1], 20)
-                    window['-MESSAGE-'].update(wrapped)
-                    window['-IN-'].update('')
+                    window["-MESSAGE-"].update(wrapped)
+                    window["-IN-"].update("")
 
         # User quit event
-        elif event == 'Exit' or event is None or event == sg.WIN_CLOSED:
+        elif event == "Exit" or event is None or event == sg.WIN_CLOSED:
             break
 
         # user did nothing or something invalid so pass.
