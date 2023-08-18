@@ -181,6 +181,7 @@ def interpret_commands(user_input: str):
         return tokens
 
     action = tokens.pop(0)
+    result = ""
 
     # based on game state pass tokens to respective game_play manager
     match game_state:
