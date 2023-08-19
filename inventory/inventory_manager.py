@@ -1,3 +1,7 @@
+"""
+This is the inventory manager for Shadowcrypt, it handles the manipulation of the players inventory and items.
+"""
+
 import combat.combat_manager as com
 
 game_items = {
@@ -11,9 +15,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
+        # sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
+        # modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (4 if action == "equip" else -4))
         )
@@ -28,9 +34,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
+        # sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
+        # modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "health", (25 if action == "equip" else -25)),
             player["set_stat"](player["stats"], "max_health", (25 if action == "equip" else -25))
@@ -46,9 +54,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
+        # sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
+        # modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (5 if action == "equip" else -5))
         )
@@ -63,6 +73,7 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
+        # sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
@@ -78,9 +89,11 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
+        # sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
+        # increases the players attack value
         "use_effect": lambda player: (
             player["set_stat"](player["stats"], "attack", 5)
         )
@@ -95,9 +108,11 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
+        # sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
+        # sets the players health equal to the players max_health
         "use_effect": lambda player: (
             player["set_stat"](player["stats"], "health", player["stats"]["max_health"])
         )
@@ -123,9 +138,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
+        # sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
+        # modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (15 if action == "equip" else -15))
         )
@@ -190,7 +207,7 @@ def use_action(item: str):
         return tuple(("Message", message))
 
 
-def inventory_game_play(action, item_name):
+def inventory_game_play(action: str, item_name: str):
     """
     Handles inventory commands received from command manager
     :param action: The inventory command
@@ -201,6 +218,7 @@ def inventory_game_play(action, item_name):
     if item_name not in game_items:
         return tuple(("Error", "That is not a valid item."))
 
+    # call the right function based on action
     match action:
         case "equip":
             return equip_action(action, item_name)

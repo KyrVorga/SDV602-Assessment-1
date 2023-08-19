@@ -1,8 +1,8 @@
 """
-Input validation for command_manager.py
+Input validation for command_manager.py.
 """
 
-# Valid tokens for exploration game state
+# Valid tokens for explore gameplay
 explore_tokens = {
     "engage",
     "search",
@@ -14,13 +14,14 @@ explore_tokens = {
     "up",
 }
 
+# Valid tokens for inventory manipulation
 inventory_tokens = {
     "equip",
     "unequip",
     "use"
 }
 
-# Valid tokens for combat game state
+# Valid tokens for combat gameplay
 combat_tokens = {
     "attack",
     "heal",
@@ -28,6 +29,7 @@ combat_tokens = {
     "run"
 }
 
+# Valid tokens for status commands
 status_tokens = {
     "inventory",
     "equipment",

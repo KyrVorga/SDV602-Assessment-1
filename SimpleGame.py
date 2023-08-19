@@ -5,14 +5,11 @@ This is the main application for the Shadowcrypt text-adventure game
 import PySimpleGUI as sg
 import textwrap
 import command.command_manager as cm
-import sys
 import os
 
-try:
-    wd = sys._MEIPASS
-except AttributeError:
-    wd = os.getcwd()
-file_path = os.path.join(wd, 'images/')
+# gets the path to the images folder
+file_path = os.path.join(os.getcwd(), 'images/')
+
 
 def make_a_window():
     """
@@ -94,7 +91,6 @@ def make_a_window():
         element_justification="l",
         scrollable=True,
         vertical_scroll_only=True,
-        # expand_y=True
     )
 
     # merge columns into layout and add a seperator
@@ -104,7 +100,7 @@ def make_a_window():
         column_right
     ]
 
-    return sg.Window("Adventure Game", [layout], size=(500, 400))
+    return sg.Window("Shadowcrypt", [layout], size=(500, 400))
 
 
 if __name__ == "__main__":

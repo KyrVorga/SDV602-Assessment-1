@@ -1,5 +1,5 @@
 """
-This is the command parser for Shadowcrypt, it handles commands and movement
+This is the command manager for Shadowcrypt, it handles commands and movement.
 """
 
 import command.token as tkn
@@ -186,20 +186,25 @@ def interpret_commands(user_input: str):
     # based on game state pass tokens to respective game_play manager
     match game_state:
         case "explore":
+            # send to explore
             if action in tkn.explore_tokens:
                 result = explore_game_play(action)
-
+            # send to inventory_manager
             elif action in tkn.inventory_tokens:
                 item_name = " ".join(tokens)
                 result = im.inventory_game_play(action, item_name)
 
+            # send to status_manager
             elif action in tkn.status_tokens:
                 result = sts.show_status_text(action)
 
+        # send to combat_manager
         case "combat":
             result = com.combat_game_play(action)
+
         case _:
             result = ""
+
     return result
 
 
