@@ -5,10 +5,17 @@ This is the main application for the Shadowcrypt text-adventure game
 import PySimpleGUI as sg
 import textwrap
 import command.command_manager as cm
+import sys
 import os
 
+try:
+    wd = sys._MEIPASS
+except AttributeError:
+    wd = os.getcwd()
+file_path = os.path.join(wd, 'images\\')
+
 # gets the path to the images folder
-file_path = os.path.join(os.getcwd(), 'images/')
+# file_path = os.path.join(os.getcwd(), 'images/')
 
 
 def make_a_window():
