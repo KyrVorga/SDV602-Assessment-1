@@ -16,13 +16,13 @@ def make_a_window():
     Creates a game window
 
     Returns:
-        window: the handle to the game window
+        window: The handle to the game window
     """
 
-    # sets the theme of the window
+    # Sets the theme of the window
     sg.theme("DarkTeal10")
 
-    # user text input
+    # User text input
     prompt_input = [
         sg.Input(
             key="-IN-",
@@ -31,7 +31,7 @@ def make_a_window():
         )
     ]
 
-    # enter and exit buttons
+    # Enter and exit buttons
     buttons = [
         sg.Button(
             "Enter",
@@ -53,7 +53,7 @@ def make_a_window():
         ),
     ]
 
-    # location image
+    # Location image
     image = [
         sg.Image(
             file_path+"forest.png",
@@ -68,7 +68,6 @@ def make_a_window():
             cm.show_current_place(),
             size=(30, 40),
             auto_size_text=True,
-            # expand_x=True,
             expand_y=True,
             font="Any 12",
             key="-OUTPUT-",
@@ -76,7 +75,7 @@ def make_a_window():
         )
     ]
 
-    # create two columns to align content.
+    # Create two columns to align content.
     column_left = sg.Column(
         [
             image,
@@ -93,7 +92,7 @@ def make_a_window():
         vertical_scroll_only=True,
     )
 
-    # merge columns into layout and add a seperator
+    # Merge columns into layout and add a seperator
     layout = [
         column_left,
         sg.VSeparator(),
@@ -103,6 +102,7 @@ def make_a_window():
     return sg.Window("Shadowcrypt", [layout], size=(500, 400))
 
 
+# If this is the file being run
 if __name__ == "__main__":
     # A persistent window - stays until "Exit" is pressed
     window = make_a_window()
@@ -114,19 +114,19 @@ if __name__ == "__main__":
             # Get string from user input
             user_input = values["-IN-"].lower().strip()
             if user_input != '':
-                # run game functions and get text to display in window
+                # Run game functions and get text to display in window
                 story = cm.interpret_commands(user_input)
 
-                # if a message is not returned then update the window with story text
+                # If a message is not returned then update the window with story text
                 if type(story) != tuple:
                     window["-IN-"].update("")
                     window["-OUTPUT-"].update(story)
                     window["-IMG-"].update(file_path + cm.game_places[cm.game_location]["image"], size=(180, 180))
                     window["-MESSAGE-"].update("")
 
-                # otherwise it"s a message
+                # Otherwise it"s a message
                 else:
-                    # if message is not an error update the window
+                    # If message is not an error update the window
                     if not story[0] == "Error":
                         wrapped = textwrap.fill(story[1], 20)
                         window["-MESSAGE-"].update(wrapped)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         elif event == "Exit" or event is None or event == sg.WIN_CLOSED:
             break
 
-        # user did nothing or something invalid so pass.
+        # sUer did nothing or something invalid so pass.
         else:
             pass
 

@@ -4,6 +4,7 @@ This is the inventory manager for Shadowcrypt, it handles the manipulation of th
 
 import combat.combat_manager as com
 
+# Dictionary of all items within the game, also acts as the player's inventory
 game_items = {
     "wooden staff": {
         "name": "Wooden Staff",
@@ -15,11 +16,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
-        # sets the equipped state to the opposite of what it is
+        # Sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
-        # modifies the players stats based on the action to perform
+        # Modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (4 if action == "equip" else -4))
         )
@@ -34,11 +35,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
-        # sets the equipped state to the opposite of what it is
+        # Sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
-        # modifies the players stats based on the action to perform
+        # Modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "health", (25 if action == "equip" else -25)),
             player["set_stat"](player["stats"], "max_health", (25 if action == "equip" else -25))
@@ -54,11 +55,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
-        # sets the equipped state to the opposite of what it is
+        # Sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
-        # modifies the players stats based on the action to perform
+        # Modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (5 if action == "equip" else -5))
         )
@@ -73,7 +74,7 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
-        # sets used to true
+        # Sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
@@ -89,11 +90,11 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
-        # sets used to true
+        # Sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
-        # increases the players attack value
+        # Increases the players attack value
         "use_effect": lambda player: (
             player["set_stat"](player["stats"], "attack", 5)
         )
@@ -108,11 +109,11 @@ game_items = {
         "acquired": False,
         "usable": True,
         "used": False,
-        # sets used to true
+        # Sets used to true
         "use_item": lambda item: (
             item.update({"used": True})
         ),
-        # sets the players health equal to the players max_health
+        # Sets the players health equal to the players max_health
         "use_effect": lambda player: (
             player["set_stat"](player["stats"], "health", player["stats"]["max_health"])
         )
@@ -138,11 +139,11 @@ game_items = {
         "acquired": False,
         "usable": False,
         "used": False,
-        # sets the equipped state to the opposite of what it is
+        # Sets the equipped state to the opposite of what it is
         "toggle_equip": lambda item: (
             item.update({"equipped": True if item["equipped"] is False else False})
         ),
-        # modifies the players stats based on the action to perform
+        # Modifies the players stats based on the action to perform
         "equip_effect": lambda player, action: (
             player["set_stat"](player["stats"], "attack", (15 if action == "equip" else -15))
         )
@@ -157,7 +158,7 @@ def equip_action(action: str, item: str):
     :param item: The item to invoke from
     :return: A tuple containing a message to display on the window
     """
-    # if the item is not acquired or unequippable return a message
+    # If the item is not acquired or unequippable return a message
     if not game_items[item]["acquired"]:
         return tuple(("Message", "You don't have this item."))
 
@@ -165,7 +166,7 @@ def equip_action(action: str, item: str):
         return tuple(("Message", "You can't equip this item."))
 
     else:
-        # if item's equipped state and the action are the same return a message
+        # If item's equipped state and the action are the same return a message
         if game_items[item]["equipped"] is True and action == "equip":
             return tuple(("Message", "You can't perform this action."))
 
@@ -173,7 +174,7 @@ def equip_action(action: str, item: str):
             return tuple(("Message", "You can't perform this action."))
 
         else:
-            # invoke both item lambdas that hold the equip logic
+            # Invoke both item lambdas that hold the equip logic
             game_items[item]["equip_effect"](com.player, action)
             game_items[item]["toggle_equip"](game_items[item])
 
@@ -188,7 +189,7 @@ def use_action(item: str):
     :param item: The item to invoke from
     :return: A tuple containing a message to display on the window
     """
-    # if the item is not acquired or unusable return a message
+    # If the item is not acquired or unusable return a message
     if not game_items[item]["acquired"]:
         return tuple(("Message", "You don't have this item."))
 
@@ -199,7 +200,7 @@ def use_action(item: str):
         return tuple(("Message", "You already used this item."))
 
     else:
-        # invoke both item lambdas that hold the use logic
+        # Invoke both item lambdas that hold the use logic
         game_items[item]["use_effect"](com.player)
         game_items[item]["use_item"](game_items[item])
 
@@ -214,11 +215,11 @@ def inventory_game_play(action: str, item_name: str):
     :param item_name: The item to manipulate
     :return: A tuple containing a message to display on the window
     """
-    # check if item_name is valid
+    # Check if item_name is valid
     if item_name not in game_items:
         return tuple(("Error", "That is not a valid item."))
 
-    # call the right function based on action
+    # Call the right function based on action
     match action:
         case "equip":
             return equip_action(action, item_name)
@@ -228,3 +229,8 @@ def inventory_game_play(action: str, item_name: str):
 
         case "use":
             return use_action(item_name)
+
+
+# If this is the file being run
+if __name__ == "__main__":
+    raise Exception("This file should not be run directly.")
