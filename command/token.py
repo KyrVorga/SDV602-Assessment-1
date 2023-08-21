@@ -33,7 +33,9 @@ combat_tokens = {
 status_tokens = {
     "inventory",
     "equipment",
-    "actions",
+    "help",
+    "location",
+    "story"
 }
 
 

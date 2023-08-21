@@ -2,20 +2,18 @@
 This is the main application for the Shadowcrypt text-adventure game
 """
 
-import PySimpleGUI as sg
+import PySimpleGUI
 import textwrap
 import command.command_manager as cm
 import sys
 import os
 
+# gets the path to the images folder
 try:
     wd = sys._MEIPASS
 except AttributeError:
     wd = os.getcwd()
 file_path = os.path.join(wd, 'images\\')
-
-# gets the path to the images folder
-# file_path = os.path.join(os.getcwd(), 'images/')
 
 
 def make_a_window():
@@ -27,11 +25,11 @@ def make_a_window():
     """
 
     # Sets the theme of the window
-    sg.theme("DarkTeal10")
+    PySimpleGUI.theme("DarkTeal10")
 
     # User text input
     prompt_input = [
-        sg.Input(
+        PySimpleGUI.Input(
             key="-IN-",
             size=20,
             font="Any 12"
@@ -40,12 +38,12 @@ def make_a_window():
 
     # Enter and exit buttons
     buttons = [
-        sg.Button(
+        PySimpleGUI.Button(
             "Enter",
             bind_return_key=True,
             expand_x=True
         ),
-        sg.Button(
+        PySimpleGUI.Button(
             "Exit",
             expand_x=True
         )
@@ -53,7 +51,7 @@ def make_a_window():
 
     # output text, displays messages
     item_text = [
-        sg.Text(
+        PySimpleGUI.Text(
             "",
             font="Any 12",
             key="-MESSAGE-"
@@ -62,7 +60,7 @@ def make_a_window():
 
     # Location image
     image = [
-        sg.Image(
+        PySimpleGUI.Image(
             file_path+"forest.png",
             size=(180, 180),
             key="-IMG-"
@@ -71,7 +69,7 @@ def make_a_window():
 
     # Main text area for story, inventory and combat functions
     story_text = [
-        sg.Text(
+        PySimpleGUI.Text(
             cm.show_current_place(),
             size=(30, 40),
             auto_size_text=True,
@@ -83,7 +81,7 @@ def make_a_window():
     ]
 
     # Create two columns to align content.
-    column_left = sg.Column(
+    column_left = PySimpleGUI.Column(
         [
             image,
             prompt_input,
@@ -92,7 +90,7 @@ def make_a_window():
         ],
         element_justification="c"
     )
-    column_right = sg.Column(
+    column_right = PySimpleGUI.Column(
         [story_text],
         element_justification="l",
         scrollable=True,
@@ -102,11 +100,11 @@ def make_a_window():
     # Merge columns into layout and add a seperator
     layout = [
         column_left,
-        sg.VSeparator(),
+        PySimpleGUI.VSeparator(),
         column_right
     ]
 
-    return sg.Window("Shadowcrypt", [layout], size=(500, 400))
+    return PySimpleGUI.Window("Shadowcrypt", [layout], size=(500, 400))
 
 
 # If this is the file being run
@@ -131,7 +129,7 @@ if __name__ == "__main__":
                     window["-IMG-"].update(file_path + cm.game_places[cm.game_location]["image"], size=(180, 180))
                     window["-MESSAGE-"].update("")
 
-                # Otherwise it"s a message
+                # Otherwise it's a message
                 else:
                     # If message is not an error update the window
                     if not story[0] == "Error":
@@ -140,7 +138,7 @@ if __name__ == "__main__":
                         window["-IN-"].update("")
 
         # User quit event
-        elif event == "Exit" or event is None or event == sg.WIN_CLOSED:
+        elif event == "Exit" or event is None or event == PySimpleGUI.WIN_CLOSED:
             break
 
         # sUer did nothing or something invalid so pass.
