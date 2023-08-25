@@ -2,6 +2,36 @@
 This is the main application for the Shadowcrypt text-adventure game
 """
 
+'''
+Data Types:
+
+Dictionary
+    A dictionary is a unordered collection of key value pairs. Dictionaries are mutable and can be modified
+    after their definition. Dictionaries are good data structure when accessing by key is needed. I use a dictionary
+    in command_manager.py at line 18 to store information about the locations in my game.
+    
+List
+    A list is a mutable ordered collection data type, it is a flexible type that can contain duplicates and 
+    items of any type. Lists have several useful builtin functions like pop(), join() and len(). I used a list 
+    whenever I need to join a variable amount of strings together, such as in token.py in the validate_list function.
+    
+Tuple
+    A tuple is an immutable ordered collection data type, which is similar to lists. Tuples are used when you need
+    a small collection of unchanging objects. I used Tuples all throughout my code to pass messages through functions
+    all the way to the window. Not a great practice but I had to use tuples somewhere, haha...
+    
+Set
+    A set is a mutable unordered sequence data type. Since the order is undefined, the objects within will be jumbled
+    up whenever the set is loaded. Sets do not allow duplicate items. I used sets to store my game tokens, which I
+    frequently iterate over. The order of the token sets is not important to me, so a set was desirable.
+    
+Comprehensions
+    Comprehensions are a short and concise syntax for creating sequence and collection data types, like sets, lists
+    and dictionaries. A comprehension iterates over a sequence to create the new sequence. The comprehension can 
+    contain brief conditional logic, and can modify the data as it is added to the new sequence. I use a 
+    comprehension in token.py on line 55 to split a string and lower each new string.
+'''
+
 import PySimpleGUI
 import textwrap
 import command.command_manager as cm
